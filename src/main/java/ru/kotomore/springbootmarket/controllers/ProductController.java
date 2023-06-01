@@ -1,5 +1,6 @@
 package ru.kotomore.springbootmarket.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,14 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(summary = "Добавление товара", description = """
+            Добавляет товар. В зависимости от типа товара могут быть разные свойства:
+            
+                "diagonalSize":double для мониторов
+                "screenSize":integer для ноутбуков
+                "formFactor":("DESKTOP", "NETTOP", "MONOBLOCK") для настольных компьютеров
+                "capacity":integer для жестких дисков
+                """)
     public ResponseEntity<? extends ProductDTO> addProduct(@RequestParam ProductType productType,
                                                            @Valid @RequestBody RequestProductDTO product) {
 
@@ -53,6 +62,14 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
+    @Operation(summary = "Редактирование товара", description = """
+            Изменяет поля товара. В зависимости от типа товара могут быть разные свойства:
+            
+                "diagonalSize:double" для мониторов
+                "screenSize:integer" для ноутбуков
+                "formFactor:("DESKTOP", "NETTOP", "MONOBLOCK")" для настольных компьютеров
+                "capacity:integer" для жестких дисков
+                """)
     public ResponseEntity<? extends ProductDTO> updateProduct(@PathVariable Long productId,
                                                               @RequestBody RequestProductDTO product) {
         Product existingProduct = productService.getProductById(productId);
@@ -70,6 +87,7 @@ public class ProductController {
 
 
     @GetMapping
+    @Operation(summary = "Просмотр всех существующих товаров по типу")
     public ResponseEntity<List<? extends ProductDTO>> getAllProductsByType(
             @RequestParam(value = "type") ProductType productType) {
 
@@ -85,6 +103,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Просмотр товара по идентификатору")
     @GetMapping("/{productId}")
     public ResponseEntity<? extends ProductDTO> getProductById(@PathVariable Long productId) {
         Product product = productService.getProductById(productId);
