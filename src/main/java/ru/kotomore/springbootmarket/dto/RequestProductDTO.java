@@ -1,11 +1,16 @@
 package ru.kotomore.springbootmarket.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import ru.kotomore.springbootmarket.models.DesktopFormFactor;
 
 public class RequestProductDTO {
 
+    @NotEmpty(message = "не должно быть пустым")
     private String serialNumber;
+    @NotEmpty(message = "не должно быть пустым")
     private String manufacturer;
+    @Min(value = 1, message = "должно быть больше 1")
     private double price;
     private int count;
     private double diagonalSize;

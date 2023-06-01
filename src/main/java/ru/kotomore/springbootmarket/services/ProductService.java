@@ -1,5 +1,6 @@
 package ru.kotomore.springbootmarket.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.kotomore.springbootmarket.models.Product;
@@ -22,7 +23,7 @@ public class ProductService {
     }
 
     public Product getProductById(Long productId) {
-        return productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Продукт не найден"));
+        return productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Продукт не найден"));
     }
 
     public List<Product> getAllProductsByType(ProductType productType) {
