@@ -9,7 +9,7 @@ public class ProductDTO {
     private String serialNumber;
     private String manufacturer;
     private double price;
-    private int quantity;
+    private int count;
 
     public Long getId() {
         return id;
@@ -51,11 +51,11 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getCount() {
+        return count;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setCount(int count) {
+        this.count = count;
     }
 }

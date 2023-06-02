@@ -9,6 +9,7 @@ import java.util.List;
 @Component
 public class ProductValidator {
 
+    //Метод проверяет соответствие полей типу продукта
     public void validate(Product product) {
         ProductType productType = product.getProductType();
 
@@ -19,8 +20,8 @@ public class ProductValidator {
                 }
             }
             case LAPTOP -> {
-                if (List.of(13, 14, 15, 17).contains(product.getScreenSize())) {
-                    throw new IllegalArgumentException("Поле screenSize может быть 13, 14, 15 или 17");
+                if (!List.of(13, 14, 15, 17).contains(product.getScreenSize())) {
+                    throw new IllegalArgumentException("Поле screenSize должно быть равно 13, 14, 15 или 17");
                 }
             }
             case MONITOR -> {

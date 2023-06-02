@@ -23,7 +23,8 @@ public class ProductService {
     }
 
     public Product getProductById(Long productId) {
-        return productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Продукт не найден"));
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Продукт не найден"));
     }
 
     public List<Product> getAllProductsByType(ProductType productType) {

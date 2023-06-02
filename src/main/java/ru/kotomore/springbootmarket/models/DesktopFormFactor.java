@@ -14,4 +14,12 @@ public enum DesktopFormFactor {
     public String getDisplayName() {
         return displayName;
     }
+
+    public static DesktopFormFactor fromDisplayName(String displayName) {
+        try {
+            return DesktopFormFactor.valueOf(DesktopFormFactor.class, displayName);
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Неопознанный тип настольного компьютера - " + displayName);
+        }
+    }
 }

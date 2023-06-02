@@ -37,12 +37,12 @@ public class RequestExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException ex) {
 
-        List<org.springdoc.api.ErrorMessage> errorMessages = new ArrayList<>();
+        List<ErrorMessage> errorMessages = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             String message = "Поле " + fieldName + " " + errorMessage;
-            errorMessages.add(new org.springdoc.api.ErrorMessage(message));
+            errorMessages.add(new ErrorMessage(message));
         });
         return new ResponseEntity<>(errorMessages, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
