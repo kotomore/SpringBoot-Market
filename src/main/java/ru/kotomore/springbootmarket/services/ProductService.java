@@ -2,12 +2,12 @@ package ru.kotomore.springbootmarket.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.kotomore.springbootmarket.models.Product;
 import ru.kotomore.springbootmarket.models.ProductType;
 import ru.kotomore.springbootmarket.repositories.ProductRepository;
-
-import java.util.List;
 
 @Service
 public class ProductService {
@@ -27,8 +27,8 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Продукт не найден"));
     }
 
-    public List<Product> getAllProductsByType(ProductType productType) {
-        return productRepository.findByProductType(productType);
+    public Page<Product> getAllProductsByType(ProductType productType, Pageable pageable) {
+        return productRepository.findByProductType(productType, pageable);
     }
 
     public Product updateProduct(Product product) {

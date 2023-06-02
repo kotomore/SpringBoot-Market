@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +23,6 @@ import ru.kotomore.springbootmarket.models.ProductType;
 import ru.kotomore.springbootmarket.services.ProductService;
 import ru.kotomore.springbootmarket.util.DTOMapper;
 import ru.kotomore.springbootmarket.util.ProductValidator;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -44,7 +44,7 @@ public class ProductController {
     @PostMapping
     @Operation(summary = "Добавление товара", description = """
             Добавляет товар. В зависимости от типа товара могут быть разные свойства:
-            
+                        
                 "diagonalSize":double для мониторов
                 "screenSize":integer для ноутбуков
                 "formFactor":("DESKTOP", "NETTOP", "MONOBLOCK") для настольных компьютеров
@@ -70,7 +70,7 @@ public class ProductController {
     @PutMapping("/{productId}")
     @Operation(summary = "Редактирование товара", description = """
             Изменяет поля товара. В зависимости от типа товара могут быть разные свойства:
-            
+                        
                 "diagonalSize:double" для мониторов
                 "screenSize:integer" для ноутбуков
                 "formFactor:("DESKTOP", "NETTOP", "MONOBLOCK")" для настольных компьютеров
@@ -109,17 +109,18 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
     })
-    public ResponseEntity<List<? extends ProductDTO>> getAllProductsByType(
+    public ResponseEntity<Page<? extends ProductDTO>> getAllProductsByType(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(value = "type") ProductType productType) {
 
-        List<Product> products = productService.getAllProductsByType(productType);
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Product> products = productService.getAllProductsByType(productType, pageable);
         if (products.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            List<? extends ProductDTO> productDTOS = products
-                    .stream()
-                    .map(dtoMapper::mapToDTO)
-                    .collect(Collectors.toList());
+            Page<? extends ProductDTO> productDTOS = products.map(dtoMapper::mapToDTO);
             return ResponseEntity.status(HttpStatus.OK).body(productDTOS);
         }
     }
