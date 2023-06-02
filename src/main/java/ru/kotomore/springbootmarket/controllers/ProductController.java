@@ -56,7 +56,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
     })
-    public ResponseEntity<? extends ProductDTO> addProduct(@RequestParam ProductType productType,
+    public ResponseEntity<ProductDTO> addProduct(@RequestParam ProductType productType,
                                                            @Valid @RequestBody RequestProductDTO product) {
 
         Product newProduct = modelMapper.map(product, Product.class);
@@ -84,7 +84,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
     })
-    public ResponseEntity<? extends ProductDTO> updateProduct(@PathVariable Long productId,
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long productId,
                                                               @RequestBody RequestProductDTO product) {
 
         Product existingProduct = productService.getProductById(productId);
@@ -109,7 +109,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
     })
-    public ResponseEntity<Page<? extends ProductDTO>> getAllProductsByType(
+    public ResponseEntity<Page<ProductDTO>> getAllProductsByType(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(value = "type") ProductType productType) {
@@ -120,7 +120,7 @@ public class ProductController {
         if (products.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            Page<? extends ProductDTO> productDTOS = products.map(dtoMapper::mapToDTO);
+            Page<ProductDTO> productDTOS = products.map(dtoMapper::mapToDTO);
             return ResponseEntity.status(HttpStatus.OK).body(productDTOS);
         }
     }
@@ -135,7 +135,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
     })
-    public ResponseEntity<? extends ProductDTO> getProductById(@PathVariable Long productId) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long productId) {
 
         Product product = productService.getProductById(productId);
         if (product == null) {

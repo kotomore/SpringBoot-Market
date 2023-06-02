@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class MonitorDTO extends ProductDTO {
 
-    private double diagonal;
+    private double diagonalSize;
 }
