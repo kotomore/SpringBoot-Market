@@ -76,7 +76,7 @@ public class ProductControllerTest {
         Long productId = 1L;
         mockMvc.perform(MockMvcRequestBuilders.get("/products/{productId}", productId)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class ProductControllerTest {
                         .content(objectMapper.writeValueAsString(requestProductDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     private Product createProduct() {

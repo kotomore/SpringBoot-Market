@@ -27,10 +27,10 @@ public class RequestExceptionAdvice {
 
     @ResponseBody
     @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Object> entityNotFoundException(EntityNotFoundException ex) {
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), new HttpHeaders(),
-                HttpStatus.NOT_FOUND);
+                HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})

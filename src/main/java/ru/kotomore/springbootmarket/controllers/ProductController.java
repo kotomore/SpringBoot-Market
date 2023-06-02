@@ -1,12 +1,18 @@
 package ru.kotomore.springbootmarket.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.kotomore.springbootmarket.dto.DesktopDTO;
+import ru.kotomore.springbootmarket.dto.ErrorMessage;
 import ru.kotomore.springbootmarket.dto.ProductDTO;
 import ru.kotomore.springbootmarket.dto.RequestProductDTO;
 import ru.kotomore.springbootmarket.models.Product;
@@ -44,20 +50,20 @@ public class ProductController {
                 "formFactor":("DESKTOP", "NETTOP", "MONOBLOCK") для настольных компьютеров
                 "capacity":integer для жестких дисков
                 """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Товар добавлен",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = DesktopDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+    })
     public ResponseEntity<? extends ProductDTO> addProduct(@RequestParam ProductType productType,
                                                            @Valid @RequestBody RequestProductDTO product) {
 
-        if (productType == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
         Product newProduct = modelMapper.map(product, Product.class);
         newProduct.setProductType(productType);
-
         productValidator.validate(newProduct);
 
         Product savedProduct = productService.save(newProduct);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(dtoMapper.mapToDTO(savedProduct));
     }
 
@@ -70,12 +76,19 @@ public class ProductController {
                 "formFactor:("DESKTOP", "NETTOP", "MONOBLOCK")" для настольных компьютеров
                 "capacity:integer" для жестких дисков
                 """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Товар обновлен",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = DesktopDTO.class))),
+            @ApiResponse(responseCode = "204", description = "Редактируемый товар не найден",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+    })
     public ResponseEntity<? extends ProductDTO> updateProduct(@PathVariable Long productId,
                                                               @RequestBody RequestProductDTO product) {
+
         Product existingProduct = productService.getProductById(productId);
-        if (existingProduct == null) {
-            return ResponseEntity.notFound().build();
-        }
+
         Product savedProduct = modelMapper.map(product, Product.class);
         savedProduct.setId(productId);
         savedProduct.setProductType(existingProduct.getProductType());
@@ -88,12 +101,20 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "Просмотр всех существующих товаров по типу")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Товары найдены",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = DesktopDTO.class))),
+            @ApiResponse(responseCode = "204", description = "Товаров не найдено",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+    })
     public ResponseEntity<List<? extends ProductDTO>> getAllProductsByType(
             @RequestParam(value = "type") ProductType productType) {
 
         List<Product> products = productService.getAllProductsByType(productType);
         if (products.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             List<? extends ProductDTO> productDTOS = products
                     .stream()
@@ -103,12 +124,21 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = "Просмотр товара по идентификатору")
     @GetMapping("/{productId}")
+    @Operation(summary = "Просмотр товара по идентификатору")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Товар найден",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = DesktopDTO.class))),
+            @ApiResponse(responseCode = "204", description = "Товар не найден",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Неверный формат запроса",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+    })
     public ResponseEntity<? extends ProductDTO> getProductById(@PathVariable Long productId) {
+
         Product product = productService.getProductById(productId);
         if (product == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(dtoMapper.mapToDTO(product));
